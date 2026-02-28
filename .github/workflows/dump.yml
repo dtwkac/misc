@@ -1,0 +1,497 @@
+name: dump
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/dump.yml'
+      - 'test/sort-gcc.cpp'
+      - 'test/sort-std.cpp'
+
+env:
+  GCC_VERSION: 15.2.0
+  CLANG_VERSION: 22.1.0
+  RED: \033[31m
+  GREEN: \033[32m
+  RESET: \033[0m
+
+jobs:
+  ubuntu-gcc-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: ubuntu gcc ${{ env.GCC_VERSION }}
+        run: |
+          set -e
+          sudo apt-get update &> /dev/null
+          sudo apt-get install -y wget g++ libmpc-dev make flex &> /dev/null
+          curl -fsSL -O https://github.com/gcc-mirror/gcc/archive/refs/tags/releases/gcc-${GCC_VERSION}.tar.gz
+          tar -zxf gcc-${GCC_VERSION}.tar.gz
+          rm gcc-${GCC_VERSION}.tar.gz
+          cd gcc-releases-gcc-${GCC_VERSION}
+          mkdir build
+          cd build
+          ../configure --disable-multilib &> /dev/null
+          make -j$(nproc) &> /dev/null
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ \
+            -B${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include/x86_64-pc-linux-gnu \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/libstdc++-v3/libsupc++ \
+            -L${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs \
+            ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ \
+            -B${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include/x86_64-pc-linux-gnu \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/libstdc++-v3/libsupc++ \
+            -L${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs \
+            ${GITHUB_WORKSPACE}/test/sort-gcc.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}------------------------------ single output ------------------------------${RESET}"
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v
+          echo -e "${GREEN}------------------------------ {} output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v
+          }
+          echo -e "${GREEN}------------------------------ {} 2>&1 output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v
+          } 2>&1
+
+  ubuntu-gcc-dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: ubuntu gcc ${{ env.GCC_VERSION }}
+        run: |
+          set -e
+          sudo apt-get update &> /dev/null
+          sudo apt-get install -y wget g++ libmpc-dev make flex &> /dev/null
+          curl -fsSL -O https://github.com/gcc-mirror/gcc/archive/refs/tags/releases/gcc-${GCC_VERSION}.tar.gz
+          tar -zxf gcc-${GCC_VERSION}.tar.gz
+          rm gcc-${GCC_VERSION}.tar.gz
+          cd gcc-releases-gcc-${GCC_VERSION}
+          mkdir build
+          cd build
+          ../configure --disable-multilib &> /dev/null
+          make -j$(nproc) &> /dev/null
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ \
+            -B${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include/x86_64-pc-linux-gnu \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/libstdc++-v3/libsupc++ \
+            -L${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs \
+            ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ \
+            -B${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include/x86_64-pc-linux-gnu \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/include \
+            -I${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/libstdc++-v3/libsupc++ \
+            -L${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs \
+            ${GITHUB_WORKSPACE}/test/sort-gcc.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}" > log1
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version >> log1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}" >> log1
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v >> log1 2> /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}" > log2
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version 2>> log2 > /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}" >> log2
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v 2>> log2
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}" > log3
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version >> log3 2>&1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}" >> log3
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v >> log3 2>&1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}" > log4
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version &>> log4
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}" >> log4
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v &>> log4
+          echo -e "${GREEN}------------------------------ single >> log ------------------------------${RESET}"
+          cat log1
+          echo -e "${GREEN}------------------------------ single 2>> log ------------------------------${RESET}"
+          cat log2
+          echo -e "${GREEN}------------------------------ single >> log 2>&1 ------------------------------${RESET}"
+          cat log3
+          echo -e "${GREEN}------------------------------ single &>> log ------------------------------${RESET}"
+          cat log4
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v 2> /dev/null
+          } > log5
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}" >&2
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version > /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}" >&2
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v
+          } 2> log6
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v
+          } > log7 2>&1
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v:${RESET}"
+          ${GITHUB_WORKSPACE}/gcc-releases-gcc-${GCC_VERSION}/build/gcc/xg++ -v
+          } &> log8
+          echo -e "${GREEN}------------------------------ {} > log ------------------------------${RESET}"
+          cat log5
+          echo -e "${GREEN}------------------------------ {} 2> log ------------------------------${RESET}"
+          cat log6
+          echo -e "${GREEN}------------------------------ {} > log 2>&1 ------------------------------${RESET}"
+          cat log7
+          echo -e "${GREEN}------------------------------ {} &> log ------------------------------${RESET}"
+          cat log8
+
+  ubuntu-clang-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: ubuntu clang ${{ env.CLANG_VERSION }}
+        run: |
+          set -e
+          sudo apt-get update &> /dev/null
+          sudo apt-get install -y curl cmake ninja-build g++ python3 &> /dev/null
+          curl -fsSL -O https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_VERSION}/llvm-project-${CLANG_VERSION}.src.tar.xz
+          tar -xf llvm-project-${CLANG_VERSION}.src.tar.xz
+          cd llvm-project-${CLANG_VERSION}.src
+          mkdir build
+          cd build
+          cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS="clang" \
+            -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxxabi;libcxx" &> /dev/null
+          ninja &> /dev/null
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang++ ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang++ ${GITHUB_WORKSPACE}/test/sort-gcc.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}------------------------------ single output ------------------------------${RESET}"
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          echo -e "${GREEN}------------------------------ {} output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          }
+          echo -e "${GREEN}------------------------------ {} 2>&1 output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } 2>&1
+
+  ubuntu-clang-dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: ubuntu clang ${{ env.CLANG_VERSION }}
+        run: |
+          set -e
+          sudo apt-get update &> /dev/null
+          sudo apt-get install -y curl cmake ninja-build g++ python3 &> /dev/null
+          curl -fsSL -O https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_VERSION}/llvm-project-${CLANG_VERSION}.src.tar.xz
+          tar -xf llvm-project-${CLANG_VERSION}.src.tar.xz
+          cd llvm-project-${CLANG_VERSION}.src
+          mkdir build
+          cd build
+          cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS="clang" \
+            -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxxabi;libcxx" &> /dev/null
+          ninja &> /dev/null
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang++ ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang++ ${GITHUB_WORKSPACE}/test/sort-gcc.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log1
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version >> log1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log1
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v >> log1 2> /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version 2>> log2 > /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v 2>> log2
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log3
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version >> log3 2>&1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log3
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v >> log3 2>&1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log4
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version &>> log4
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log4
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v &>> log4
+          echo -e "${GREEN}------------------------------ single >> log ------------------------------${RESET}"
+          cat log1
+          echo -e "${GREEN}------------------------------ single 2>> log ------------------------------${RESET}"
+          cat log2
+          echo -e "${GREEN}------------------------------ single >> log 2>&1 ------------------------------${RESET}"
+          cat log3
+          echo -e "${GREEN}------------------------------ single &>> log ------------------------------${RESET}"
+          cat log4
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v 2> /dev/null
+          } > log5
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" >&2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version > /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >&2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } 2> log6
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } > log7 2>&1
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } &> log8
+          echo -e "${GREEN}------------------------------ {} 1 > log ------------------------------${RESET}"
+          cat log5
+          echo -e "${GREEN}------------------------------ {} 2 > log ------------------------------${RESET}"
+          cat log6
+          echo -e "${GREEN}------------------------------ {} > log 2>&1 ------------------------------${RESET}"
+          cat log7
+          echo -e "${GREEN}------------------------------ {} &> log ------------------------------${RESET}"
+          cat log8
+
+  macos-gcc-output:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: macos default gcc
+        run: |
+          set -e
+          which g++-15
+          g++-15 ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          g++-15 ${GITHUB_WORKSPACE}/test/sort-gcc.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}------------------------------ single output ------------------------------${RESET}"
+          echo -e "${GREEN}g++-15 --version:${RESET}"
+          g++-15 --version
+          echo -e "${GREEN}g++-15 -v:${RESET}"
+          g++-15 -v
+          echo -e "${GREEN}------------------------------ {} output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}g++-15 --version:${RESET}"
+          g++-15 --version
+          echo -e "${GREEN}g++-15 -v:${RESET}"
+          g++-15 -v
+          }
+          echo -e "${GREEN}------------------------------ {} 2>&1 output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}g++-15 --version:${RESET}"
+          g++-15 --version
+          echo -e "${GREEN}g++-15 -v:${RESET}"
+          g++-15 -v
+          } 2>&1
+
+  macos-gcc-dump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: macos default gcc
+        run: |
+          set -e
+          which g++-15
+          g++-15 ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          g++-15 ${GITHUB_WORKSPACE}/test/sort-gcc.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}g++-15 --version:${RESET}" > log1
+          g++-15 --version >> log1
+          echo -e "${GREEN}g++-15 -v:${RESET}" >> log1
+          g++-15 -v >> log1 2> /dev/null
+          echo -e "${GREEN}g++-15 --version:${RESET}" > log2
+          g++-15 --version 2>> log2 > /dev/null
+          echo -e "${GREEN}g++-15 -v:${RESET}" >> log2
+          g++-15 -v 2>> log2
+          echo -e "${GREEN}g++-15 --version:${RESET}" > log3
+          g++-15 --version >> log3 2>&1
+          echo -e "${GREEN}g++-15 -v:${RESET}" >> log3
+          g++-15 -v >> log3 2>&1
+          echo -e "${GREEN}------------------------------ single >> log ------------------------------${RESET}"
+          cat log1
+          echo -e "${GREEN}------------------------------ single 2>> log ------------------------------${RESET}"
+          cat log2
+          echo -e "${GREEN}------------------------------ single >> log 2>&1 ------------------------------${RESET}"
+          cat log3
+          {
+          echo -e "${GREEN}g++-15 --version:${RESET}"
+          g++-15 --version
+          echo -e "${GREEN}g++-15 -v:${RESET}"
+          g++-15 -v 2> /dev/null
+          } > log4
+          {
+          echo -e "${GREEN}g++-15 --version:${RESET}" >&2
+          g++-15 --version > /dev/null
+          echo -e "${GREEN}g++-15 -v:${RESET}" >&2
+          g++-15 -v
+          } 2> log5
+          {
+          echo -e "${GREEN}g++-15 --version:${RESET}"
+          g++-15 --version
+          echo -e "${GREEN}g++-15 -v:${RESET}"
+          g++-15 -v
+          } > log6 2>&1
+          {
+          echo -e "${GREEN}g++-15 --version:${RESET}"
+          g++-15 --version
+          echo -e "${GREEN}g++-15 -v:${RESET}"
+          g++-15 -v
+          } &> log7
+          echo -e "${GREEN}------------------------------ {} > log ------------------------------${RESET}"
+          cat log4
+          echo -e "${GREEN}------------------------------ {} 2> log ------------------------------${RESET}"
+          cat log5
+          echo -e "${GREEN}------------------------------ {} > log 2>&1 ------------------------------${RESET}"
+          cat log6
+          echo -e "${GREEN}------------------------------ {} &> log ------------------------------${RESET}"
+          cat log7
+
+  macos-clang-output:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: macos clang ${{ env.CLANG_VERSION }}
+        run: |
+          set -e
+          curl -fsSL -O https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_VERSION}/llvm-project-${CLANG_VERSION}.src.tar.xz
+          tar -xf llvm-project-${CLANG_VERSION}.src.tar.xz
+          cd llvm-project-${CLANG_VERSION}.src
+          mkdir build
+          cd build
+          cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS="clang" \
+            -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxxabi;libcxx" > /dev/null 2>&1
+          ninja > /dev/null 2>&1
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang++ --sysroot=$(xcrun --sdk macosx --show-sdk-path) ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}------------------------------ single output ------------------------------${RESET}"
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          echo -e "${GREEN}------------------------------ {} output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          }
+          echo -e "${GREEN}------------------------------ {} 2>&1 output ------------------------------${RESET}"
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } 2>&1
+
+  macos-clang-dump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: macos clang ${{ env.CLANG_VERSION }}
+        run: |
+          set -e
+          curl -fsSL -O https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_VERSION}/llvm-project-${CLANG_VERSION}.src.tar.xz
+          tar -xf llvm-project-${CLANG_VERSION}.src.tar.xz
+          cd llvm-project-${CLANG_VERSION}.src
+          mkdir build
+          cd build
+          cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS="clang" \
+            -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxxabi;libcxx" > /dev/null 2>&1
+          ninja > /dev/null 2>&1
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang++ --sysroot=$(xcrun --sdk macosx --show-sdk-path) ${GITHUB_WORKSPACE}/test/sort-std.cpp
+          ./a.out
+          rm a.out
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log1
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version >> log1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log1
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v >> log1 2> /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version 2>> log2 > /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v 2>> log2
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" > log3
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version >> log3 2>&1
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >> log3
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v >> log3 2>&1
+          echo -e "${GREEN}------------------------------ single >> log ------------------------------${RESET}"
+          cat log1
+          echo -e "${GREEN}------------------------------ single 2>> log ------------------------------${RESET}"
+          cat log2
+          echo -e "${GREEN}------------------------------ single >> log 2>&1 ------------------------------${RESET}"
+          cat log3
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v 2> /dev/null
+          } > log4
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}" >&2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version > /dev/null
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}" >&2
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } 2> log5
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } > log6 2>&1
+          {
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang --version
+          echo -e "${GREEN}${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v:${RESET}"
+          ${GITHUB_WORKSPACE}/llvm-project-${CLANG_VERSION}.src/build/bin/clang -v
+          } &> log7
+          echo -e "${GREEN}------------------------------ {} > log ------------------------------${RESET}"
+          cat log4
+          echo -e "${GREEN}------------------------------ {} 2> log ------------------------------${RESET}"
+          cat log5
+          echo -e "${GREEN}------------------------------ {} > log 2>&1 ------------------------------${RESET}"
+          cat log6
+          echo -e "${GREEN}------------------------------ {} &> log ------------------------------${RESET}"
+          cat log7
