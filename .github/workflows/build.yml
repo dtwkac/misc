@@ -192,11 +192,6 @@ jobs:
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-x64   -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPath64"
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-arm64 -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPathArm64"
           cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package debian ------------------------------${RESET}"
-          release_tag="1.0.0"
-          chmod 755 package-debian.sh
-          ./package-debian.sh $OutputArch $OutputPath64 ${release_tag}
-          ./package-debian.sh $OutputArchArm $OutputPathArm64 ${release_tag}
           echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
           chmod 755 package-release-zip.sh
           ./package-release-zip.sh $OutputArch $OutputPath64
@@ -409,11 +404,6 @@ jobs:
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-x64   -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPath64"
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-arm64 -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPathArm64"
           cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package debian ------------------------------${RESET}"
-          release_tag="1.0.0"
-          chmod 755 package-debian.sh
-          ./package-debian.sh $OutputArch $OutputPath64 ${release_tag}
-          ./package-debian.sh $OutputArchArm $OutputPathArm64 ${release_tag}
           echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
           chmod 755 package-release-zip.sh
           ./package-release-zip.sh $OutputArch $OutputPath64
