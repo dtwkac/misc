@@ -157,16 +157,6 @@ jobs:
           dotnet publish ./v2rayN.Desktop/v2rayN.Desktop.csproj -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -o $OutputPathArm64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r win-x64   -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPath64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPathArm64
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          mv "v2rayN-${OutputArch}.zip" "v2rayN-${OutputArch}-desktop.zip"
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
-          mv "v2rayN-${OutputArchArm}.zip" "v2rayN-${OutputArchArm}-desktop.zip"
-          mv v2rayN-windows-64 v2rayN-windows-64-desktop
-          mv v2rayN-windows-arm64 v2rayN-windows-arm64-desktop
-          cd ${HOME}/project/v2rayN/v2rayN
           echo -e "${GREEN}------------------------------ build windows ------------------------------${RESET}"
           OutputArch="windows-64"
           OutputArchArm="windows-arm64"
@@ -176,12 +166,6 @@ jobs:
           dotnet publish ./v2rayN/v2rayN.csproj     -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -o $OutputPathArm64
           dotnet publish ./AmazTool/AmazTool.csproj -c Release -r win-x64   -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPath64
           dotnet publish ./AmazTool/AmazTool.csproj -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPathArm64
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
-          cd ${HOME}/project/v2rayN/v2rayN
           echo -e "${GREEN}------------------------------ build linux ------------------------------${RESET}"
           OutputArch="linux-64"
           OutputArchArm="linux-arm64"
@@ -191,12 +175,6 @@ jobs:
           dotnet publish ./v2rayN.Desktop/v2rayN.Desktop.csproj -c Release -r linux-arm64 -p:SelfContained=true -o "$OutputPathArm64"
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-x64   -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPath64"
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-arm64 -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPathArm64"
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
-          cd ${HOME}/project/v2rayN/v2rayN
           echo -e "${GREEN}------------------------------ build osx ------------------------------${RESET}"
           OutputArch="macos-64"
           OutputArchArm="macos-arm64"
@@ -206,11 +184,6 @@ jobs:
           dotnet publish ./v2rayN.Desktop/v2rayN.Desktop.csproj -c Release -r osx-arm64 -p:SelfContained=true -o $OutputPathArm64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r osx-x64   -p:SelfContained=true -p:PublishTrimmed=true -o $OutputPath64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r osx-arm64 -p:SelfContained=true -p:PublishTrimmed=true -o $OutputPathArm64
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
           echo -e "${GREEN}ls -AlhF ${HOME}/project/v2rayN:${RESET}"
           ls -AlhF ${HOME}/project/v2rayN
           echo -e "${GREEN}du -sh ${HOME}/project:${RESET}"
@@ -369,16 +342,6 @@ jobs:
           dotnet publish ./v2rayN.Desktop/v2rayN.Desktop.csproj -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -o $OutputPathArm64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r win-x64   -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPath64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPathArm64
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          mv "v2rayN-${OutputArch}.zip" "v2rayN-${OutputArch}-desktop.zip"
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
-          mv "v2rayN-${OutputArchArm}.zip" "v2rayN-${OutputArchArm}-desktop.zip"
-          mv v2rayN-windows-64 v2rayN-windows-64-desktop
-          mv v2rayN-windows-arm64 v2rayN-windows-arm64-desktop
-          cd ${HOME}/project/v2rayN/v2rayN
           echo -e "${GREEN}------------------------------ build windows ------------------------------${RESET}"
           OutputArch="windows-64"
           OutputArchArm="windows-arm64"
@@ -388,12 +351,6 @@ jobs:
           dotnet publish ./v2rayN/v2rayN.csproj     -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -o $OutputPathArm64
           dotnet publish ./AmazTool/AmazTool.csproj -c Release -r win-x64   -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPath64
           dotnet publish ./AmazTool/AmazTool.csproj -c Release -r win-arm64 -p:SelfContained=true -p:EnableWindowsTargeting=true -p:PublishTrimmed=true -o $OutputPathArm64
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
-          cd ${HOME}/project/v2rayN/v2rayN
           echo -e "${GREEN}------------------------------ build linux ------------------------------${RESET}"
           OutputArch="linux-64"
           OutputArchArm="linux-arm64"
@@ -403,12 +360,6 @@ jobs:
           dotnet publish ./v2rayN.Desktop/v2rayN.Desktop.csproj -c Release -r linux-arm64 -p:SelfContained=true -o "$OutputPathArm64"
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-x64   -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPath64"
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r linux-arm64 -p:SelfContained=true -p:PublishTrimmed=true -o "$OutputPathArm64"
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
-          cd ${HOME}/project/v2rayN/v2rayN
           echo -e "${GREEN}------------------------------ build osx ------------------------------${RESET}"
           OutputArch="macos-64"
           OutputArchArm="macos-arm64"
@@ -418,11 +369,6 @@ jobs:
           dotnet publish ./v2rayN.Desktop/v2rayN.Desktop.csproj -c Release -r osx-arm64 -p:SelfContained=true -o $OutputPathArm64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r osx-x64   -p:SelfContained=true -p:PublishTrimmed=true -o $OutputPath64
           dotnet publish ./AmazTool/AmazTool.csproj             -c Release -r osx-arm64 -p:SelfContained=true -p:PublishTrimmed=true -o $OutputPathArm64
-          cd ${HOME}/project/v2rayN
-          echo -e "${GREEN}------------------------------ package release zip archive ------------------------------${RESET}"
-          chmod 755 package-release-zip.sh
-          ./package-release-zip.sh $OutputArch $OutputPath64
-          ./package-release-zip.sh $OutputArchArm $OutputPathArm64
           echo -e "${GREEN}ls -AlhF ${HOME}/project/v2rayN:${RESET}"
           ls -AlhF ${HOME}/project/v2rayN
           echo -e "${GREEN}du -sh ${HOME}/project:${RESET}"
